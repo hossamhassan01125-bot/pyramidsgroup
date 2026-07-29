@@ -71,7 +71,14 @@ function PropertiesPage() {
   });
 
   const booking = useMutation({
-    mutationFn: (data: Parameters<typeof bookFn>[0]["data"]) => bookFn({ data }),
+    mutationFn: (data: {
+      property_id: string;
+      full_name: string;
+      phone: string;
+      email?: string;
+      visit_date?: string;
+      notes?: string;
+    }) => bookFn({ data }),
     onSuccess: () => {
       toast.success("تم إرسال طلب الحجز بنجاح");
       setBookingFor(null);

@@ -43,7 +43,12 @@ function BookingsPage() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["bookings"] });
 
   const update = useMutation({
-    mutationFn: (data: Parameters<typeof updateFn>[0]["data"]) => updateFn({ data }),
+    mutationFn: (data: {
+      id: string;
+      status?: "pending" | "confirmed" | "cancelled";
+      visit_date?: string;
+      notes?: string;
+    }) => updateFn({ data }),
     onSuccess: () => {
       toast.success("تم تحديث الحجز");
       invalidate();
