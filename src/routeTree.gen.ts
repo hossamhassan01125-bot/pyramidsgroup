@@ -10,33 +10,55 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicBookingsRouteImport } from './routes/api/public/bookings'
+import { Route as ApiPublicPropertiesSearchRouteImport } from './routes/api/public/properties/search'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBookingsRoute = ApiPublicBookingsRouteImport.update({
+  id: '/api/public/bookings',
+  path: '/api/public/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPropertiesSearchRoute =
+  ApiPublicPropertiesSearchRouteImport.update({
+    id: '/api/public/properties/search',
+    path: '/api/public/properties/search',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/api/public/properties/search': typeof ApiPublicPropertiesSearchRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/api/public/properties/search': typeof ApiPublicPropertiesSearchRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/public/bookings': typeof ApiPublicBookingsRoute
+  '/api/public/properties/search': typeof ApiPublicPropertiesSearchRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/api/public/bookings' | '/api/public/properties/search'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/api/public/bookings' | '/api/public/properties/search'
+  id:
+    '__root__' | '/' | '/api/public/bookings' | '/api/public/properties/search'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiPublicBookingsRoute: typeof ApiPublicBookingsRoute
+  ApiPublicPropertiesSearchRoute: typeof ApiPublicPropertiesSearchRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +70,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/bookings': {
+      id: '/api/public/bookings'
+      path: '/api/public/bookings'
+      fullPath: '/api/public/bookings'
+      preLoaderRoute: typeof ApiPublicBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/properties/search': {
+      id: '/api/public/properties/search'
+      path: '/api/public/properties/search'
+      fullPath: '/api/public/properties/search'
+      preLoaderRoute: typeof ApiPublicPropertiesSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiPublicBookingsRoute: ApiPublicBookingsRoute,
+  ApiPublicPropertiesSearchRoute: ApiPublicPropertiesSearchRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
