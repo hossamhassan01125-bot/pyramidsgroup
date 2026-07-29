@@ -87,6 +87,14 @@ function AdminProperties() {
   const queryClient = useQueryClient();
 
   const [form, setForm] = useState<Form | null>(null);
+  const [quick, setQuick] = useState<{
+    id: string;
+    title: string;
+    type: string;
+    price: string;
+    city: string;
+    is_available: boolean;
+  } | null>(null);
 
   const access = useQuery({ queryKey: ["access"], queryFn: () => accessFn({}) });
   const properties = useQuery({
