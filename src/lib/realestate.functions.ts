@@ -144,10 +144,18 @@ export const updateBooking = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { id, ...rest } = data;
-    const patch: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(rest)) {
-      if (value !== undefined) patch[key] = value === "" ? null : value;
-    }
+    const patch: {
+      status?: "pending" | "confirmed" | "cancelled";
+      visit_date?: string | null;
+      notes?: string | null;
+      phone?: string;
+      full_name?: string;
+    } = {};
+    if (rest.status !== undefined) patch.status = rest.status;
+    if (rest.visit_date !== undefined) patch.visit_date = rest.visit_date || null;
+    if (rest.notes !== undefined) patch.notes = rest.notes || null;
+    if (rest.phone !== undefined) patch.phone = rest.phone;
+    if (rest.full_name !== undefined) patch.full_name = rest.full_name;
     const { data: row, error } = await context.supabase
       .from("bookings")
       .update(patch)
