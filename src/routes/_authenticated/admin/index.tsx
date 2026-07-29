@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Check, X, Zap } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -87,6 +87,14 @@ function AdminProperties() {
   const queryClient = useQueryClient();
 
   const [form, setForm] = useState<Form | null>(null);
+  const [quick, setQuick] = useState<{
+    id: string;
+    title: string;
+    type: string;
+    price: string;
+    city: string;
+    is_available: boolean;
+  } | null>(null);
 
   const access = useQuery({ queryKey: ["access"], queryFn: () => accessFn({}) });
   const properties = useQuery({
@@ -114,6 +122,38 @@ function AdminProperties() {
     onSuccess: () => {
       toast.success("تم حفظ العقار");
       setForm(null);
+      invalidate();
+    },
+    onError: (e: Error) => toast.error("تعذّر الحفظ: " + e.message),
+  });
+
+  const quickSave = useMutation({
+    mutationFn: async (p: {
+      id: string;
+      description: string | null;
+      country: string;
+      image_url: string | null;
+      area_sqm: number | null;
+    }) => {
+      if (!quick) throw new Error("لا يوجد تعديل");
+      return updateFn({
+        data: {
+          id: p.id,
+          title: quick.title,
+          type: quick.type as "apartment",
+          price: Number(quick.price),
+          description: p.description ?? "",
+          city: quick.city,
+          country: p.country,
+          image_url: p.image_url ?? "",
+          area_sqm: p.area_sqm,
+          is_available: quick.is_available,
+        },
+      });
+    },
+    onSuccess: () => {
+      toast.success("تم التعديل السريع");
+      setQuick(null);
       invalidate();
     },
     onError: (e: Error) => toast.error("تعذّر الحفظ: " + e.message),
@@ -176,45 +216,164 @@ function AdminProperties() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {properties.data?.map((p) => (
-              <TableRow key={p.id}>
-                <TableCell className="font-mono text-xs">{p.reference}</TableCell>
-                <TableCell className="font-medium">{p.title}</TableCell>
-                <TableCell>{typeLabel(p.type)}</TableCell>
-                <TableCell>{p.city}</TableCell>
-                <TableCell>{formatPrice(p.price)}</TableCell>
-                <TableCell>
-                  <Badge variant={p.is_available ? "default" : "secondary"}>
-                    {p.is_available ? "متاح" : "غير متاح"}
-                  </Badge>
-                </TableCell>
-                <TableCell className="space-x-2 space-x-reverse text-left">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() =>
-                      setForm({
-                        id: p.id,
-                        title: p.title,
-                        type: p.type,
-                        price: String(p.price),
-                        description: p.description ?? "",
-                        city: p.city,
-                        country: p.country,
-                        image_url: p.image_url ?? "",
-                        area_sqm: p.area_sqm ? String(p.area_sqm) : "",
-                        is_available: p.is_available,
-                      })
-                    }
-                  >
-                    <Pencil className="size-4" />
-                  </Button>
-                  <Button size="sm" variant="destructive" onClick={() => remove.mutate(p.id)}>
-                    <Trash2 className="size-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {properties.data?.map((p) => {
+              const editing = quick?.id === p.id;
+              return (
+                <TableRow key={p.id}>
+                  <TableCell className="font-mono text-xs">{p.reference}</TableCell>
+                  <TableCell className="font-medium">
+                    {editing ? (
+                      <Input
+                        className="h-8 min-w-40"
+                        value={quick!.title}
+                        onChange={(e) => setQuick({ ...quick!, title: e.target.value })}
+                      />
+                    ) : (
+                      p.title
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editing ? (
+                      <Select
+                        value={quick!.type}
+                        onValueChange={(v) => setQuick({ ...quick!, type: v })}
+                      >
+                        <SelectTrigger className="h-8 min-w-28">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {PROPERTY_TYPES.map((t) => (
+                            <SelectItem key={t.value} value={t.value}>
+                              {t.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      typeLabel(p.type)
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editing ? (
+                      <Input
+                        className="h-8 min-w-28"
+                        value={quick!.city}
+                        onChange={(e) => setQuick({ ...quick!, city: e.target.value })}
+                      />
+                    ) : (
+                      p.city
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editing ? (
+                      <Input
+                        className="h-8 min-w-32"
+                        type="number"
+                        min={0}
+                        value={quick!.price}
+                        onChange={(e) => setQuick({ ...quick!, price: e.target.value })}
+                      />
+                    ) : (
+                      formatPrice(p.price)
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editing ? (
+                      <Select
+                        value={quick!.is_available ? "1" : "0"}
+                        onValueChange={(v) => setQuick({ ...quick!, is_available: v === "1" })}
+                      >
+                        <SelectTrigger className="h-8 min-w-24">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">متاح</SelectItem>
+                          <SelectItem value="0">غير متاح</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Badge variant={p.is_available ? "default" : "secondary"}>
+                        {p.is_available ? "متاح" : "غير متاح"}
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="space-x-2 space-x-reverse text-left">
+                    {editing ? (
+                      <>
+                        <Button
+                          size="sm"
+                          disabled={quickSave.isPending}
+                          title="حفظ"
+                          onClick={() =>
+                            quickSave.mutate({
+                              id: p.id,
+                              description: p.description,
+                              country: p.country,
+                              image_url: p.image_url,
+                              area_sqm: p.area_sqm,
+                            })
+                          }
+                        >
+                          <Check className="size-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          title="إلغاء"
+                          onClick={() => setQuick(null)}
+                        >
+                          <X className="size-4" />
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          title="تعديل سريع"
+                          onClick={() =>
+                            setQuick({
+                              id: p.id,
+                              title: p.title,
+                              type: p.type,
+                              price: String(p.price),
+                              city: p.city,
+                              is_available: p.is_available,
+                            })
+                          }
+                        >
+                          <Zap className="size-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          title="تعديل كامل"
+                          onClick={() =>
+                            setForm({
+                              id: p.id,
+                              title: p.title,
+                              type: p.type,
+                              price: String(p.price),
+                              description: p.description ?? "",
+                              city: p.city,
+                              country: p.country,
+                              image_url: p.image_url ?? "",
+                              area_sqm: p.area_sqm ? String(p.area_sqm) : "",
+                              is_available: p.is_available,
+                            })
+                          }
+                        >
+                          <Pencil className="size-4" />
+                        </Button>
+                        <Button size="sm" variant="destructive" onClick={() => remove.mutate(p.id)}>
+                          <Trash2 className="size-4" />
+                        </Button>
+                      </>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
