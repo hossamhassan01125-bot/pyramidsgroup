@@ -127,6 +127,38 @@ function AdminProperties() {
     onError: (e: Error) => toast.error("تعذّر الحفظ: " + e.message),
   });
 
+  const quickSave = useMutation({
+    mutationFn: async (p: {
+      id: string;
+      description: string | null;
+      country: string;
+      image_url: string | null;
+      area_sqm: number | null;
+    }) => {
+      if (!quick) throw new Error("لا يوجد تعديل");
+      return updateFn({
+        data: {
+          id: p.id,
+          title: quick.title,
+          type: quick.type as "apartment",
+          price: Number(quick.price),
+          description: p.description ?? "",
+          city: quick.city,
+          country: p.country,
+          image_url: p.image_url ?? "",
+          area_sqm: p.area_sqm,
+          is_available: quick.is_available,
+        },
+      });
+    },
+    onSuccess: () => {
+      toast.success("تم التعديل السريع");
+      setQuick(null);
+      invalidate();
+    },
+    onError: (e: Error) => toast.error("تعذّر الحفظ: " + e.message),
+  });
+
   const remove = useMutation({
     mutationFn: (id: string) => deleteFn({ data: { id } }),
     onSuccess: () => {
