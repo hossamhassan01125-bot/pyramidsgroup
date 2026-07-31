@@ -48,7 +48,7 @@ function AuthPage() {
     e.preventDefault();
     if (fullName.trim().length < 2) return toast.error("أدخل الاسم الكامل");
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -58,7 +58,13 @@ function AuthPage() {
     });
     setLoading(false);
     if (error) return toast.error("تعذّر إنشاء الحساب: " + error.message);
-    toast.success("تم إنشاء الحساب، يمكنك تسجيل الدخول الآن");
+    toast.success("تم إنشاء الحساب بنجاح");
+    if (data.session) navigate({ to: "/properties", replace: true });
+    else {
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) return toast.error("سجّل الدخول من فضلك");
+      navigate({ to: "/properties", replace: true });
+    }
   }
 
   return (
