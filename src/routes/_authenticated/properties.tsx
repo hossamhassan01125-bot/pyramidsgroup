@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { MapPin, Ruler, Hash, Search } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { PropertyImage } from "@/components/property-image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
