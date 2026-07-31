@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { MapPin, Ruler, Hash, Search } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { PropertyImage } from "@/components/property-image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -174,12 +175,12 @@ function PropertiesPage() {
               key={p.id}
               className="overflow-hidden rounded-2xl border border-border bg-card shadow-card"
             >
-              <img
-                src={p.image_url ?? ""}
+              <PropertyImage
+                value={p.image_url}
                 alt={p.title}
-                loading="lazy"
                 className="h-44 w-full object-cover"
               />
+
               <div className="space-y-2 p-4">
                 <div className="flex items-center justify-between gap-2">
                   <Badge variant="secondary">{typeLabel(p.type)}</Badge>
