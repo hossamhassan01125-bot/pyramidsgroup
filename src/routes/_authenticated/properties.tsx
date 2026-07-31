@@ -174,12 +174,12 @@ function PropertiesPage() {
               key={p.id}
               className="overflow-hidden rounded-2xl border border-border bg-card shadow-card"
             >
-              <img
-                src={p.image_url ?? ""}
+              <PropertyImage
+                value={p.image_url}
                 alt={p.title}
-                loading="lazy"
                 className="h-44 w-full object-cover"
               />
+
               <div className="space-y-2 p-4">
                 <div className="flex items-center justify-between gap-2">
                   <Badge variant="secondary">{typeLabel(p.type)}</Badge>

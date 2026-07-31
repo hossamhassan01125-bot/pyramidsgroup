@@ -32,6 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { PropertyImageUpload } from "@/components/property-image-upload";
 import { PROPERTY_TYPES, formatPrice, typeLabel } from "@/lib/realestate";
 import {
   getMyAccess,
@@ -471,16 +472,11 @@ function AdminProperties() {
                   </Select>
                 </div>
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="f-image">رابط صورة العقار</Label>
-                <Input
-                  id="f-image"
-                  type="url"
-                  placeholder="https://…"
-                  value={form.image_url}
-                  onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-                />
-              </div>
+              <PropertyImageUpload
+                value={form.image_url}
+                onChange={(v) => setForm({ ...form, image_url: v })}
+              />
+
               <div className="space-y-1.5">
                 <Label htmlFor="f-desc">الوصف</Label>
                 <Textarea
