@@ -97,7 +97,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "عقاري",
+          url: "https://pyramidsgroup.lovable.app",
+          description:
+            "منصة عقارية لعرض العقارات في مصر والبحث فيها وحجز المعاينات.",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "عقاري",
+          url: "https://pyramidsgroup.lovable.app",
+          inLanguage: "ar",
+        }),
+      },
+    ],
   }),
+
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
