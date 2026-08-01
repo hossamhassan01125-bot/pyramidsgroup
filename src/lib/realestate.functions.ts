@@ -173,8 +173,20 @@ export const updateBooking = createServerFn({ method: "POST" })
       .select()
       .single();
     if (error) throw new Error(error.message);
+
+    if (patch.status === "confirmed") {
+      const { data: property } = await context.supabase
+        .from("properties")
+        .select("id, reference, title, city, type, price")
+        .eq("id", row.property_id)
+        .maybeSingle();
+      const { notifyBookingEvent } = await import("@/lib/notify.server");
+      await notifyBookingEvent({ event: "booking_confirmed", booking: row, property: property ?? null });
+    }
+
     return row;
   });
+
 
 export const deleteBooking = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
