@@ -49,8 +49,13 @@ export const Route = createFileRoute("/_authenticated/admin/")({
       { name: "description", content: "لوحة مدير النظام لإضافة وتعديل وحذف العقارات." },
       { property: "og:title", content: "إدارة العقارات | عقاري" },
       { property: "og:description", content: "إدارة كاملة لقائمة العقارات." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://pyramidsgroup.lovable.app/admin" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://pyramidsgroup.lovable.app/admin" }],
   }),
+
   component: AdminProperties,
 });
 
