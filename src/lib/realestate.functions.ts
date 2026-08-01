@@ -125,8 +125,18 @@ export const createBooking = createServerFn({ method: "POST" })
       .select()
       .single();
     if (error) throw new Error(error.message);
+
+    const { data: property } = await context.supabase
+      .from("properties")
+      .select("id, reference, title, city, type, price")
+      .eq("id", data.property_id)
+      .maybeSingle();
+    const { notifyBookingEvent } = await import("@/lib/notify.server");
+    await notifyBookingEvent({ event: "booking_created", booking: row, property: property ?? null });
+
     return row;
   });
+
 
 export const updateBooking = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
