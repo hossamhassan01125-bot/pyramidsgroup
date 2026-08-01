@@ -69,6 +69,23 @@ export const Route = createFileRoute("/api/public/bookings")({
 
         if (error) return json({ success: false, error: error.message }, 500);
 
+        const { notifyBookingEvent } = await import("@/lib/notify.server");
+        await notifyBookingEvent({
+          event: "booking_created",
+          booking: {
+            id: booking.id,
+            full_name: data.full_name,
+            phone: data.phone,
+            email: data.email ?? null,
+            visit_date: booking.visit_date,
+            notes: data.notes ?? null,
+            status: booking.status,
+            source: "api",
+          },
+          property: { id: property.id, reference: property.reference, title: property.title },
+        });
+
+
         return json(
           {
             success: true,
