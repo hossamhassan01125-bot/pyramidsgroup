@@ -16,9 +16,12 @@ export const Route = createFileRoute("/")({
         content: "تصفح عقارات مصر، ابحث بالنوع والسعر والمدينة، واحجز معاينتك مباشرة.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://pyramidsgroup.lovable.app/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://pyramidsgroup.lovable.app/" }],
   }),
+
   component: Index,
 });
 
