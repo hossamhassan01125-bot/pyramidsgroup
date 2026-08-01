@@ -119,7 +119,7 @@ function BookingsPage() {
                       إلغاء
                     </Button>
                   )}
-                  <Button size="sm" variant="destructive" onClick={() => remove.mutate(b.id)}>
+                  <Button size="sm" variant="destructive" aria-label="حذف الحجز" onClick={() => remove.mutate(b.id)}>
                     <Trash2 className="size-4" />
                   </Button>
                 </TableCell>
