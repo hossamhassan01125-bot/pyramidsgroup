@@ -366,9 +366,10 @@ function AdminProperties() {
                         >
                           <Pencil className="size-4" />
                         </Button>
-                        <Button size="sm" variant="destructive" onClick={() => remove.mutate(p.id)}>
+                        <Button size="sm" variant="destructive" aria-label="حذف العقار" onClick={() => remove.mutate(p.id)}>
                           <Trash2 className="size-4" />
                         </Button>
+
                       </>
                     )}
                   </TableCell>
