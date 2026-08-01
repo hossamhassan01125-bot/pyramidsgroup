@@ -78,9 +78,13 @@ function AuthPage() {
         <Link to="/" className="flex items-center justify-center gap-2 text-lg font-extrabold text-primary">
           <Building2 className="size-6" /> عقاري
         </Link>
+        <h1 className="mt-4 text-center text-xl font-bold text-foreground">
+          تسجيل الدخول وإنشاء حساب جديد
+        </h1>
         <p className="mt-2 text-center text-sm text-muted-foreground">
           سجّل الدخول للوصول إلى قائمة العقارات والبحث فيها
         </p>
+
 
         <Tabs defaultValue="signin" className="mt-6">
           <TabsList className="grid w-full grid-cols-2">
