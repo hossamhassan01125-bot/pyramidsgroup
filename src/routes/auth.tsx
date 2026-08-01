@@ -15,8 +15,13 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "سجّل دخولك أو أنشئ حساباً جديداً للبحث عن العقارات وحجز المعاينات." },
       { property: "og:title", content: "تسجيل الدخول | عقاري" },
       { property: "og:description", content: "حساب مجاني للوصول إلى قائمة العقارات والبحث والحجز." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://pyramidsgroup.lovable.app/auth" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://pyramidsgroup.lovable.app/auth" }],
   }),
+
   component: AuthPage,
 });
 
