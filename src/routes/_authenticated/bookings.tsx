@@ -25,7 +25,12 @@ export const Route = createFileRoute("/_authenticated/bookings")({
       { name: "description", content: "تابع حجوزات معاينة العقارات الخاصة بك وعدّلها أو ألغِها." },
       { property: "og:title", content: "حجوزاتي | عقاري" },
       { property: "og:description", content: "إدارة حجوزات المعاينة الخاصة بك." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://pyramidsgroup.lovable.app/bookings" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://pyramidsgroup.lovable.app/bookings" }],
+
   }),
   component: BookingsPage,
 });
@@ -114,7 +119,7 @@ function BookingsPage() {
                       إلغاء
                     </Button>
                   )}
-                  <Button size="sm" variant="destructive" onClick={() => remove.mutate(b.id)}>
+                  <Button size="sm" variant="destructive" aria-label="حذف الحجز" onClick={() => remove.mutate(b.id)}>
                     <Trash2 className="size-4" />
                   </Button>
                 </TableCell>

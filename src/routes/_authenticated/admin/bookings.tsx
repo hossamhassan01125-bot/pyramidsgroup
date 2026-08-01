@@ -30,8 +30,13 @@ export const Route = createFileRoute("/_authenticated/admin/bookings")({
       { name: "description", content: "مراجعة كل حجوزات المعاينة وتغيير حالتها من لوحة الإدارة." },
       { property: "og:title", content: "مراجعة الحجوزات | عقاري" },
       { property: "og:description", content: "إدارة حجوزات العملاء من لوحة مدير النظام." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://pyramidsgroup.lovable.app/admin/bookings" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://pyramidsgroup.lovable.app/admin/bookings" }],
   }),
+
   component: AdminBookings,
 });
 
@@ -134,7 +139,7 @@ function AdminBookings() {
                   </Select>
                 </TableCell>
                 <TableCell className="text-left">
-                  <Button size="sm" variant="destructive" onClick={() => remove.mutate(b.id)}>
+                  <Button size="sm" variant="destructive" aria-label="حذف الحجز" onClick={() => remove.mutate(b.id)}>
                     <Trash2 className="size-4" />
                   </Button>
                 </TableCell>
