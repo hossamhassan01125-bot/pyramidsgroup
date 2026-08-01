@@ -36,10 +36,32 @@ export const Route = createFileRoute("/_authenticated/properties")({
       { name: "description", content: "ابحث في العقارات المتاحة حسب النوع والسعر والمدينة واحجز معاينتك." },
       { property: "og:title", content: "قائمة العقارات | عقاري" },
       { property: "og:description", content: "بحث متقدم في عقارات مصر: شقق، فيلات، أراضٍ ومكاتب." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://pyramidsgroup.lovable.app/properties" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: "https://pyramidsgroup.lovable.app/properties" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "قائمة العقارات",
+          description: "عقارات متاحة في مصر: شقق، فيلات، أراضٍ ومكاتب.",
+          url: "https://pyramidsgroup.lovable.app/properties",
+          isPartOf: {
+            "@type": "WebSite",
+            name: "عقاري",
+            url: "https://pyramidsgroup.lovable.app",
+          },
+        }),
+      },
     ],
   }),
   component: PropertiesPage,
 });
+
 
 type Filters = { type: string; city: string; minPrice: string; maxPrice: string };
 const emptyFilters: Filters = { type: "all", city: "", minPrice: "", maxPrice: "" };
