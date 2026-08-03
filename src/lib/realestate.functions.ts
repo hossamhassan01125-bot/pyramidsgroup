@@ -55,7 +55,7 @@ export const createProperty = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => propertySchema.parse(input))
   .handler(async ({ data, context }) => {
-    const payload = { ...data, image_url: data.image_url || null };
+    const payload = { ...data, image_url: data.image_url || null, video_url: data.video_url || null };
     const { data: row, error } = await context.supabase.from("properties").insert(payload).select().single();
     if (error) throw new Error(error.message);
     return row;
@@ -68,7 +68,7 @@ export const updateProperty = createServerFn({ method: "POST" })
     const { id, ...rest } = data;
     const { data: row, error } = await context.supabase
       .from("properties")
-      .update({ ...rest, image_url: rest.image_url || null })
+      .update({ ...rest, image_url: rest.image_url || null, video_url: rest.video_url || null })
       .eq("id", id)
       .select()
       .single();
