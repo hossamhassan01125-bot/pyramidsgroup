@@ -322,6 +322,7 @@ function AdminProperties() {
                               description: p.description,
                               country: p.country,
                               image_url: p.image_url,
+                              video_url: p.video_url,
                               area_sqm: p.area_sqm,
                             })
                           }
@@ -370,6 +371,7 @@ function AdminProperties() {
                               city: p.city,
                               country: p.country,
                               image_url: p.image_url ?? "",
+                              video_url: p.video_url ?? "",
                               area_sqm: p.area_sqm ? String(p.area_sqm) : "",
                               is_available: p.is_available,
                             })
@@ -487,6 +489,10 @@ function AdminProperties() {
               <PropertyImageUpload
                 value={form.image_url}
                 onChange={(v) => setForm({ ...form, image_url: v })}
+              />
+              <PropertyVideoUpload
+                value={form.video_url}
+                onChange={(v) => setForm({ ...form, video_url: v })}
               />
 
               <div className="space-y-1.5">
