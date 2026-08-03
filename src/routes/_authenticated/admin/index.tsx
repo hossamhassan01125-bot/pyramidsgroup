@@ -123,6 +123,7 @@ function AdminProperties() {
         city: f.city,
         country: f.country,
         image_url: f.image_url,
+        video_url: f.video_url,
         area_sqm: f.area_sqm ? Number(f.area_sqm) : null,
         is_available: f.is_available,
       };
@@ -142,6 +143,7 @@ function AdminProperties() {
       description: string | null;
       country: string;
       image_url: string | null;
+      video_url: string | null;
       area_sqm: number | null;
     }) => {
       if (!quick) throw new Error("لا يوجد تعديل");
@@ -155,6 +157,7 @@ function AdminProperties() {
           city: quick.city,
           country: p.country,
           image_url: p.image_url ?? "",
+          video_url: p.video_url ?? "",
           area_sqm: p.area_sqm,
           is_available: quick.is_available,
         },
