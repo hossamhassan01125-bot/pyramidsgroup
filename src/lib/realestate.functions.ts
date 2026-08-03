@@ -17,6 +17,7 @@ const propertySchema = z.object({
   city: z.string().trim().min(2).max(80),
   country: z.string().trim().min(2).max(80),
   image_url: z.string().trim().max(600).optional().nullable(),
+  video_url: z.string().trim().max(600).optional().nullable(),
   area_sqm: z.number().int().nonnegative().nullable().optional(),
   is_available: z.boolean().optional(),
 });
