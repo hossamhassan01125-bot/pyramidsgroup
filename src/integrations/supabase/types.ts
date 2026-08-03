@@ -100,6 +100,7 @@ export type Database = {
           title: string
           type: Database["public"]["Enums"]["property_type"]
           updated_at: string
+          video_url: string | null
         }
         Insert: {
           area_sqm?: number | null
@@ -115,6 +116,7 @@ export type Database = {
           title: string
           type: Database["public"]["Enums"]["property_type"]
           updated_at?: string
+          video_url?: string | null
         }
         Update: {
           area_sqm?: number | null
@@ -130,6 +132,7 @@ export type Database = {
           title?: string
           type?: Database["public"]["Enums"]["property_type"]
           updated_at?: string
+          video_url?: string | null
         }
         Relationships: []
       }

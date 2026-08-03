@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { MapPin, Ruler, Hash, Search } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { PropertyImage } from "@/components/property-image";
+import { PropertyVideo } from "@/components/property-video";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -197,11 +198,15 @@ function PropertiesPage() {
               key={p.id}
               className="overflow-hidden rounded-2xl border border-border bg-card shadow-card"
             >
-              <PropertyImage
-                value={p.image_url}
-                alt={p.title}
-                className="h-44 w-full object-cover"
-              />
+              {p.video_url ? (
+                <PropertyVideo value={p.video_url} className="h-44 w-full bg-black object-cover" />
+              ) : (
+                <PropertyImage
+                  value={p.image_url}
+                  alt={p.title}
+                  className="h-44 w-full object-cover"
+                />
+              )}
 
               <div className="space-y-2 p-4">
                 <div className="flex items-center justify-between gap-2">

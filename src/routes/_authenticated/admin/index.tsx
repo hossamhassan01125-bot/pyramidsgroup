@@ -33,6 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PropertyImageUpload } from "@/components/property-image-upload";
+import { PropertyVideoUpload } from "@/components/property-video-upload";
 import { PROPERTY_TYPES, formatPrice, typeLabel } from "@/lib/realestate";
 import {
   getMyAccess,
@@ -68,6 +69,7 @@ type Form = {
   city: string;
   country: string;
   image_url: string;
+  video_url: string;
   area_sqm: string;
   is_available: boolean;
 };
@@ -80,6 +82,7 @@ const emptyForm: Form = {
   city: "",
   country: "مصر",
   image_url: "",
+  video_url: "",
   area_sqm: "",
   is_available: true,
 };
@@ -120,6 +123,7 @@ function AdminProperties() {
         city: f.city,
         country: f.country,
         image_url: f.image_url,
+        video_url: f.video_url,
         area_sqm: f.area_sqm ? Number(f.area_sqm) : null,
         is_available: f.is_available,
       };
@@ -139,6 +143,7 @@ function AdminProperties() {
       description: string | null;
       country: string;
       image_url: string | null;
+      video_url: string | null;
       area_sqm: number | null;
     }) => {
       if (!quick) throw new Error("لا يوجد تعديل");
@@ -152,6 +157,7 @@ function AdminProperties() {
           city: quick.city,
           country: p.country,
           image_url: p.image_url ?? "",
+          video_url: p.video_url ?? "",
           area_sqm: p.area_sqm,
           is_available: quick.is_available,
         },
@@ -316,6 +322,7 @@ function AdminProperties() {
                               description: p.description,
                               country: p.country,
                               image_url: p.image_url,
+                              video_url: p.video_url,
                               area_sqm: p.area_sqm,
                             })
                           }
@@ -364,6 +371,7 @@ function AdminProperties() {
                               city: p.city,
                               country: p.country,
                               image_url: p.image_url ?? "",
+                              video_url: p.video_url ?? "",
                               area_sqm: p.area_sqm ? String(p.area_sqm) : "",
                               is_available: p.is_available,
                             })
@@ -481,6 +489,10 @@ function AdminProperties() {
               <PropertyImageUpload
                 value={form.image_url}
                 onChange={(v) => setForm({ ...form, image_url: v })}
+              />
+              <PropertyVideoUpload
+                value={form.video_url}
+                onChange={(v) => setForm({ ...form, video_url: v })}
               />
 
               <div className="space-y-1.5">
