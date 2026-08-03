@@ -33,6 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PropertyImageUpload } from "@/components/property-image-upload";
+import { PropertyVideoUpload } from "@/components/property-video-upload";
 import { PROPERTY_TYPES, formatPrice, typeLabel } from "@/lib/realestate";
 import {
   getMyAccess,
@@ -68,6 +69,7 @@ type Form = {
   city: string;
   country: string;
   image_url: string;
+  video_url: string;
   area_sqm: string;
   is_available: boolean;
 };
@@ -80,6 +82,7 @@ const emptyForm: Form = {
   city: "",
   country: "مصر",
   image_url: "",
+  video_url: "",
   area_sqm: "",
   is_available: true,
 };
