@@ -56,7 +56,13 @@ export const createProperty = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => propertySchema.parse(input))
   .handler(async ({ data, context }) => {
-    const payload = { ...data, image_url: data.image_url || null, video_url: data.video_url || null };
+    const images = data.image_urls ?? (data.image_url ? [data.image_url] : []);
+    const payload = {
+      ...data,
+      image_urls: images,
+      image_url: images[0] ?? data.image_url ?? null,
+      video_url: data.video_url || null,
+    };
     const { data: row, error } = await context.supabase.from("properties").insert(payload).select().single();
     if (error) throw new Error(error.message);
     return row;
