@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { MapPin, Ruler, Hash, Search } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { PropertyImage } from "@/components/property-image";
+import { PropertyGallery } from "@/components/property-gallery";
 import { PropertyVideo } from "@/components/property-video";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -200,6 +201,8 @@ function PropertiesPage() {
             >
               {p.video_url ? (
                 <PropertyVideo value={p.video_url} className="h-44 w-full bg-black object-cover" />
+              ) : (p.image_urls?.length ?? 0) > 0 ? (
+                <PropertyGallery images={p.image_urls} alt={p.title} />
               ) : (
                 <PropertyImage
                   value={p.image_url}
