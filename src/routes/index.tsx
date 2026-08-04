@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Building2, Search, ShieldCheck, CalendarCheck, Plug } from "lucide-react";
+import { Building2, Search, CalendarCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
