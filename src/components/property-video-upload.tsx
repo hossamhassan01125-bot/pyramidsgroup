@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { PROPERTY_BUCKET } from "@/components/property-image";
 import { PropertyVideo } from "@/components/property-video";
 
-const MAX_BYTES = 50 * 1024 * 1024;
+const MAX_BYTES = 150 * 1024 * 1024;
 
 export function PropertyVideoUpload({
   value,
@@ -21,7 +21,7 @@ export function PropertyVideoUpload({
 
   async function handleFile(file: File) {
     if (!file.type.startsWith("video/")) return toast.error("اختر ملف فيديو صالح");
-    if (file.size > MAX_BYTES) return toast.error("حجم الفيديو أكبر من 50 ميجابايت");
+    if (file.size > MAX_BYTES) return toast.error("حجم الفيديو أكبر من 150 ميجابايت");
 
     setUploading(true);
     const ext = file.name.split(".").pop()?.toLowerCase() || "mp4";
@@ -69,7 +69,7 @@ export function PropertyVideoUpload({
         }}
       />
       <p className="text-xs text-muted-foreground">
-        ارفع فيديو من جهازك (حتى 50 ميجابايت) — MP4 مفضّل.
+        ارفع فيديو من جهازك (حتى 150 ميجابايت) — MP4 مفضّل.
       </p>
     </div>
   );

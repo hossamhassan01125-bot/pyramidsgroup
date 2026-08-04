@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Building2, Search, ShieldCheck, CalendarCheck, Plug } from "lucide-react";
+import { Building2, Search, CalendarCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
@@ -60,12 +60,10 @@ function Index() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-20">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           {[
             { icon: Search, title: "بحث متقدم", text: "فلترة بالنوع والسعر والمدينة في لحظة." },
             { icon: CalendarCheck, title: "حجز معاينة", text: "احجز زيارتك وتابع حالة الحجز." },
-            { icon: ShieldCheck, title: "إدارة مركزية", text: "شركة واحدة تدير كل العقارات والحجوزات." },
-            { icon: Plug, title: "API لـ n8n", text: "نتائج البحث وإنشاء الحجوزات عبر API جاهز." },
           ].map((f) => (
             <div key={f.title} className="rounded-2xl border border-border bg-card p-6 shadow-card">
               <f.icon className="size-6 text-primary" />

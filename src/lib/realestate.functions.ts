@@ -17,6 +17,7 @@ const propertySchema = z.object({
   city: z.string().trim().min(2).max(80),
   country: z.string().trim().min(2).max(80),
   image_url: z.string().trim().max(600).optional().nullable(),
+  image_urls: z.array(z.string().trim().max(600)).max(12).optional(),
   video_url: z.string().trim().max(600).optional().nullable(),
   area_sqm: z.number().int().nonnegative().nullable().optional(),
   is_available: z.boolean().optional(),
@@ -55,7 +56,13 @@ export const createProperty = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => propertySchema.parse(input))
   .handler(async ({ data, context }) => {
-    const payload = { ...data, image_url: data.image_url || null, video_url: data.video_url || null };
+    const images = data.image_urls ?? (data.image_url ? [data.image_url] : []);
+    const payload = {
+      ...data,
+      image_urls: images,
+      image_url: images[0] ?? data.image_url ?? null,
+      video_url: data.video_url || null,
+    };
     const { data: row, error } = await context.supabase.from("properties").insert(payload).select().single();
     if (error) throw new Error(error.message);
     return row;
@@ -66,9 +73,15 @@ export const updateProperty = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => propertySchema.extend({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { id, ...rest } = data;
+    const images = rest.image_urls;
     const { data: row, error } = await context.supabase
       .from("properties")
-      .update({ ...rest, image_url: rest.image_url || null, video_url: rest.video_url || null })
+      .update({
+        ...rest,
+        ...(images ? { image_urls: images } : {}),
+        image_url: (images ? images[0] : rest.image_url) || null,
+        video_url: rest.video_url || null,
+      })
       .eq("id", id)
       .select()
       .single();
