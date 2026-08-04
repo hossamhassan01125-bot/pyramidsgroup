@@ -122,7 +122,7 @@ function AdminProperties() {
         description: f.description,
         city: f.city,
         country: f.country,
-        image_url: f.image_url,
+        image_urls: f.image_urls,
         video_url: f.video_url,
         area_sqm: f.area_sqm ? Number(f.area_sqm) : null,
         is_available: f.is_available,
@@ -370,7 +370,7 @@ function AdminProperties() {
                               description: p.description ?? "",
                               city: p.city,
                               country: p.country,
-                              image_url: p.image_url ?? "",
+                              image_urls: p.image_urls ?? (p.image_url ? [p.image_url] : []),
                               video_url: p.video_url ?? "",
                               area_sqm: p.area_sqm ? String(p.area_sqm) : "",
                               is_available: p.is_available,
@@ -486,9 +486,9 @@ function AdminProperties() {
                   </Select>
                 </div>
               </div>
-              <PropertyImageUpload
-                value={form.image_url}
-                onChange={(v) => setForm({ ...form, image_url: v })}
+              <PropertyImagesUpload
+                value={form.image_urls}
+                onChange={(v: string[]) => setForm({ ...form, image_urls: v })}
               />
               <PropertyVideoUpload
                 value={form.video_url}
