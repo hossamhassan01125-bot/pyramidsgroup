@@ -73,9 +73,15 @@ export const updateProperty = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => propertySchema.extend({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { id, ...rest } = data;
+    const images = rest.image_urls;
     const { data: row, error } = await context.supabase
       .from("properties")
-      .update({ ...rest, image_url: rest.image_url || null, video_url: rest.video_url || null })
+      .update({
+        ...rest,
+        ...(images ? { image_urls: images } : {}),
+        image_url: (images ? images[0] : rest.image_url) || null,
+        video_url: rest.video_url || null,
+      })
       .eq("id", id)
       .select()
       .single();
