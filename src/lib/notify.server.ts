@@ -94,3 +94,46 @@ export async function notifyBookingEvent(input: {
     console.error("[notify] webhook error", error);
   }
 }
+
+const NEW_BOOKING_WEBHOOK_URL = "https://hoss33.app.n8n.cloud/webhook/new-booking";
+
+/** Converts an Egyptian local number to international format (20XXXXXXXXXX). */
+export function toInternationalPhone(raw: string): string {
+  let digits = (raw ?? "").replace(/[^\d+]/g, "").replace(/^\+/, "");
+  if (digits.startsWith("00")) digits = digits.slice(2);
+  if (digits.startsWith("20")) return digits;
+  if (digits.startsWith("0")) return "20" + digits.slice(1);
+  if (digits.startsWith("1") && digits.length === 10) return "20" + digits;
+  return digits;
+}
+
+/** Fire-and-forget POST to the n8n new-booking webhook. Never throws. */
+export async function notifyNewBookingWebhook(input: {
+  booking_id: string;
+  full_name: string;
+  phone: string;
+  visit_date?: string | null;
+  property_title?: string | null;
+  notes?: string | null;
+}): Promise<void> {
+  try {
+    const res = await fetch(NEW_BOOKING_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        phone: toInternationalPhone(input.phone),
+        booking_id: input.booking_id,
+        "اسم العميل": input.full_name,
+        "رقم التليفون": input.phone,
+        "معاد المعاينة": input.visit_date ?? "",
+        "اسم العقار": input.property_title ?? "",
+        ملاحظات: input.notes ?? "",
+      }),
+    });
+    if (!res.ok) {
+      console.error(`[new-booking webhook] failed [${res.status}]: ${await res.text()}`);
+    }
+  } catch (error) {
+    console.error("[new-booking webhook] error", error);
+  }
+}
