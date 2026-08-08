@@ -145,8 +145,16 @@ export const createBooking = createServerFn({ method: "POST" })
       .select("id, reference, title, city, type, price")
       .eq("id", data.property_id)
       .maybeSingle();
-    const { notifyBookingEvent } = await import("@/lib/notify.server");
+    const { notifyBookingEvent, notifyNewBookingWebhook } = await import("@/lib/notify.server");
     await notifyBookingEvent({ event: "booking_created", booking: row, property: property ?? null });
+    await notifyNewBookingWebhook({
+      booking_id: row.id,
+      full_name: row.full_name,
+      phone: row.phone,
+      visit_date: row.visit_date,
+      property_title: property?.title ?? null,
+      notes: row.notes,
+    });
 
     return row;
   });
