@@ -91,7 +91,46 @@ export async function notifyBookingEvent(input: {
   }
 }
 
-const NEW_BOOKING_WEBHOOK_URL = "https://hoss33.app.n8n.cloud/webhook/new-booking";
+const DEFAULT_WEBHOOK_URL = "https://hoss33.app.n8n.cloud/webhook/new-booking";
+
+/** Webhook URL, overridable via N8N_WEBHOOK_URL env var. */
+function webhookUrl(): string {
+  return process.env["N8N_WEBHOOK_URL"] || DEFAULT_WEBHOOK_URL;
+}
+
+const NEW_BOOKING_WEBHOOK_URL = webhookUrl();
+
+/** Fire-and-forget POST with the raw booking record. Never throws. */
+export async function notifyBookingRecordWebhook(input: {
+  id: string;
+  full_name: string;
+  phone: string;
+  email?: string | null;
+  visit_date?: string | null;
+  notes?: string | null;
+  property_id: string;
+}): Promise<void> {
+  try {
+    const res = await fetch(webhookUrl(), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        id: input.id,
+        full_name: input.full_name,
+        phone: input.phone,
+        email: input.email ?? null,
+        visit_date: input.visit_date ?? null,
+        notes: input.notes ?? null,
+        property_id: input.property_id,
+      }),
+    });
+    if (!res.ok) {
+      console.error(`[booking webhook] failed [${res.status}]: ${await res.text()}`);
+    }
+  } catch (error) {
+    console.error("[booking webhook] error", error);
+  }
+}
 
 /** Converts an Egyptian local number to international format (20XXXXXXXXXX). */
 export function toInternationalPhone(raw: string): string {
