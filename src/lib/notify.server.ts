@@ -62,11 +62,7 @@ export async function notifyBookingEvent(input: {
   booking: NotifyPayload["booking"];
   property: NotifyPayload["property"];
 }): Promise<void> {
-  const url = process.env["N8N_BOOKING_WEBHOOK_URL"] ?? NEW_BOOKING_WEBHOOK_URL;
-  if (!url) {
-    console.warn("[notify] N8N_BOOKING_WEBHOOK_URL is not configured; skipping notification");
-    return;
-  }
+  const url = NEW_BOOKING_WEBHOOK_URL;
 
   const base = {
     event: input.event,
