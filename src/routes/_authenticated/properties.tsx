@@ -68,6 +68,17 @@ export const Route = createFileRoute("/_authenticated/properties")({
 type Filters = { type: string; city: string; minPrice: string; maxPrice: string };
 const emptyFilters: Filters = { type: "all", city: "", minPrice: "", maxPrice: "" };
 
+const AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
+const FA_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
+
+/** Converts Arabic/Persian-Indic digits to Latin digits. */
+function toLatinDigits(value: string) {
+  return value.replace(/[٠-٩۰-۹]/g, (ch) => {
+    const i = AR_DIGITS.indexOf(ch);
+    return String(i >= 0 ? i : FA_DIGITS.indexOf(ch));
+  });
+}
+
 function PropertiesPage() {
   const accessFn = useServerFn(getMyAccess);
   const searchFn = useServerFn(searchProperties);
@@ -77,6 +88,8 @@ function PropertiesPage() {
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [applied, setApplied] = useState<Filters>(emptyFilters);
   const [bookingFor, setBookingFor] = useState<{ id: string; title: string } | null>(null);
+  const submitLock = useRef(false);
+
 
   const access = useQuery({ queryKey: ["access"], queryFn: () => accessFn({}) });
 
