@@ -96,7 +96,18 @@ function PropertiesPage() {
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [applied, setApplied] = useState<Filters>(emptyFilters);
   const [bookingFor, setBookingFor] = useState<{ id: string; title: string } | null>(null);
+  const [visitDate, setVisitDate] = useState<Date | undefined>(undefined);
+  const [visitTime, setVisitTime] = useState<string>("");
   const submitLock = useRef(false);
+
+  const timeSlots = useMemo(() => {
+    const slots: string[] = [];
+    for (let h = 8; h <= 20; h++) {
+      slots.push(`${String(h).padStart(2, "0")}:00`);
+      if (h < 20) slots.push(`${String(h).padStart(2, "0")}:30`);
+    }
+    return slots;
+  }, []);
 
 
   const access = useQuery({ queryKey: ["access"], queryFn: () => accessFn({}) });
