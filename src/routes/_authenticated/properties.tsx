@@ -3,7 +3,8 @@ import { useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { MapPin, Ruler, Hash, Search } from "lucide-react";
+import { MapPin, Ruler, Hash, Search, CalendarIcon, Clock } from "lucide-react";
+import { format } from "date-fns";
 import { AppShell } from "@/components/app-shell";
 import { PropertyImage } from "@/components/property-image";
 import { PropertyGallery } from "@/components/property-gallery";
@@ -12,6 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import { PROPERTY_TYPES, formatPrice, typeLabel } from "@/lib/realestate";
 import { getMyAccess, searchProperties, createBooking } from "@/lib/realestate.functions";
 
