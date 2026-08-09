@@ -297,8 +297,8 @@ function PropertiesPage() {
                 full_name: String(fd.get("full_name") ?? ""),
                 phone: toLatinDigits(String(fd.get("phone") ?? "")),
                 email: String(fd.get("email") ?? ""),
-                visit_date: String(fd.get("visit_date") ?? ""),
-                visit_time: String(fd.get("visit_time") ?? ""),
+                visit_date: visitDate ? format(visitDate, "yyyy-MM-dd") : "",
+                visit_time: visitTime,
                 notes: String(fd.get("notes") ?? ""),
               });
             }}
