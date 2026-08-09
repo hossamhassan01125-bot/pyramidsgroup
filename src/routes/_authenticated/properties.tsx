@@ -124,6 +124,9 @@ function PropertiesPage() {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
     },
     onError: (e: Error) => toast.error("تعذّر إنشاء الحجز: " + e.message),
+    onSettled: () => {
+      submitLock.current = false;
+    },
   });
 
   return (
