@@ -27,6 +27,7 @@ export type Database = {
           status: Database["public"]["Enums"]["booking_status"]
           user_id: string | null
           visit_date: string | null
+          visit_time: string | null
         }
         Insert: {
           created_at?: string
@@ -40,6 +41,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["booking_status"]
           user_id?: string | null
           visit_date?: string | null
+          visit_time?: string | null
         }
         Update: {
           created_at?: string
@@ -53,6 +55,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["booking_status"]
           user_id?: string | null
           visit_date?: string | null
+          visit_time?: string | null
         }
         Relationships: [
           {

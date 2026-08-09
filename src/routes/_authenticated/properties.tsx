@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -68,6 +68,17 @@ export const Route = createFileRoute("/_authenticated/properties")({
 type Filters = { type: string; city: string; minPrice: string; maxPrice: string };
 const emptyFilters: Filters = { type: "all", city: "", minPrice: "", maxPrice: "" };
 
+const AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
+const FA_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
+
+/** Converts Arabic/Persian-Indic digits to Latin digits. */
+function toLatinDigits(value: string) {
+  return value.replace(/[٠-٩۰-۹]/g, (ch) => {
+    const i = AR_DIGITS.indexOf(ch);
+    return String(i >= 0 ? i : FA_DIGITS.indexOf(ch));
+  });
+}
+
 function PropertiesPage() {
   const accessFn = useServerFn(getMyAccess);
   const searchFn = useServerFn(searchProperties);
@@ -77,6 +88,8 @@ function PropertiesPage() {
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [applied, setApplied] = useState<Filters>(emptyFilters);
   const [bookingFor, setBookingFor] = useState<{ id: string; title: string } | null>(null);
+  const submitLock = useRef(false);
+
 
   const access = useQuery({ queryKey: ["access"], queryFn: () => accessFn({}) });
 
@@ -102,6 +115,7 @@ function PropertiesPage() {
       phone: string;
       email?: string;
       visit_date?: string;
+      visit_time?: string;
       notes?: string;
     }) => bookFn({ data }),
     onSuccess: () => {
@@ -110,6 +124,9 @@ function PropertiesPage() {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
     },
     onError: (e: Error) => toast.error("تعذّر إنشاء الحجز: " + e.message),
+    onSettled: () => {
+      submitLock.current = false;
+    },
   });
 
   return (
@@ -253,13 +270,16 @@ function PropertiesPage() {
             className="space-y-3"
             onSubmit={(e) => {
               e.preventDefault();
+              if (booking.isPending || submitLock.current) return;
+              submitLock.current = true;
               const fd = new FormData(e.currentTarget);
               booking.mutate({
                 property_id: bookingFor!.id,
                 full_name: String(fd.get("full_name") ?? ""),
-                phone: String(fd.get("phone") ?? ""),
+                phone: toLatinDigits(String(fd.get("phone") ?? "")),
                 email: String(fd.get("email") ?? ""),
                 visit_date: String(fd.get("visit_date") ?? ""),
+                visit_time: String(fd.get("visit_time") ?? ""),
                 notes: String(fd.get("notes") ?? ""),
               });
             }}
@@ -270,16 +290,37 @@ function PropertiesPage() {
                 <Input id="b-name" name="full_name" required defaultValue={access.data?.profile?.full_name ?? ""} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="b-phone">الهاتف</Label>
-                <Input id="b-phone" name="phone" required defaultValue={access.data?.profile?.phone ?? ""} />
+                <Label htmlFor="b-phone">الهاتف (أرقام إنجليزية فقط)</Label>
+                <Input
+                  id="b-phone"
+                  name="phone"
+                  required
+                  type="tel"
+                  inputMode="tel"
+                  dir="ltr"
+                  pattern="^\+?[0-9]{6,20}$"
+                  title="اكتب الرقم بأرقام إنجليزية فقط (0-9)"
+                  placeholder="01xxxxxxxxx"
+                  defaultValue={access.data?.profile?.phone ?? ""}
+                  onInput={(e) => {
+                    const el = e.currentTarget;
+                    el.value = toLatinDigits(el.value).replace(/(?!^\+)[^0-9]/g, "");
+                  }}
+                />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="b-email">البريد الإلكتروني</Label>
                 <Input id="b-email" name="email" type="email" />
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="b-date">تاريخ الزيارة</Label>
-                <Input id="b-date" name="visit_date" type="date" />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="b-date">تاريخ الزيارة</Label>
+                  <Input id="b-date" name="visit_date" type="date" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="b-time">توقيت الزيارة</Label>
+                  <Input id="b-time" name="visit_time" type="time" />
+                </div>
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="b-notes">ملاحظات</Label>
