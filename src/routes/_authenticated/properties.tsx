@@ -102,6 +102,7 @@ function PropertiesPage() {
       phone: string;
       email?: string;
       visit_date?: string;
+      visit_time?: string;
       notes?: string;
     }) => bookFn({ data }),
     onSuccess: () => {
