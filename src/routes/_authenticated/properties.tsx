@@ -331,14 +331,51 @@ function PropertiesPage() {
                 <Label htmlFor="b-email">البريد الإلكتروني</Label>
                 <Input id="b-email" name="email" type="email" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label htmlFor="b-date">تاريخ الزيارة</Label>
-                  <Input id="b-date" name="visit_date" type="date" />
+                  <Label>تاريخ الزيارة</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !visitDate && "text-muted-foreground",
+                        )}
+                      >
+                        <CalendarIcon className="size-4" />
+                        {visitDate ? format(visitDate, "yyyy-MM-dd") : <span>اختر التاريخ</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={visitDate}
+                        onSelect={setVisitDate}
+                        initialFocus
+                        className="pointer-events-auto"
+                        disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="b-time">توقيت الزيارة</Label>
-                  <Input id="b-time" name="visit_time" type="time" />
+                  <Label>توقيت الزيارة</Label>
+                  <Select value={visitTime} onValueChange={setVisitTime}>
+                    <SelectTrigger className="w-full">
+                      <div className="flex items-center gap-2">
+                        <Clock className="size-4 text-muted-foreground" />
+                        <SelectValue placeholder="اختر التوقيت" />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {timeSlots.map((slot) => (
+                        <SelectItem key={slot} value={slot}>
+                          {slot}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div className="space-y-1.5">
