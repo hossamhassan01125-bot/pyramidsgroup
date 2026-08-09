@@ -119,6 +119,12 @@ export const createBooking = createServerFn({ method: "POST" })
         phone: z.string().trim().min(6).max(30),
         email: z.string().trim().email().max(160).optional().or(z.literal("")),
         visit_date: z.string().trim().max(20).optional().or(z.literal("")),
+        visit_time: z
+          .string()
+          .trim()
+          .regex(/^\d{2}:\d{2}(:\d{2})?$/)
+          .optional()
+          .or(z.literal("")),
         notes: z.string().trim().max(1000).optional().or(z.literal("")),
       })
       .parse(input),
@@ -133,6 +139,7 @@ export const createBooking = createServerFn({ method: "POST" })
         phone: data.phone,
         email: data.email || null,
         visit_date: data.visit_date || null,
+        visit_time: data.visit_time || null,
         notes: data.notes || null,
         source: "web",
       })
