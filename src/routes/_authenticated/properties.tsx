@@ -3,7 +3,8 @@ import { useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { MapPin, Ruler, Hash, Search } from "lucide-react";
+import { MapPin, Ruler, Hash, Search, CalendarIcon, Clock } from "lucide-react";
+import { format } from "date-fns";
 import { AppShell } from "@/components/app-shell";
 import { PropertyImage } from "@/components/property-image";
 import { PropertyGallery } from "@/components/property-gallery";
@@ -12,6 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import { PROPERTY_TYPES, formatPrice, typeLabel } from "@/lib/realestate";
 import { getMyAccess, searchProperties, createBooking } from "@/lib/realestate.functions";
 
@@ -88,7 +96,18 @@ function PropertiesPage() {
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [applied, setApplied] = useState<Filters>(emptyFilters);
   const [bookingFor, setBookingFor] = useState<{ id: string; title: string } | null>(null);
+  const [visitDate, setVisitDate] = useState<Date | undefined>(undefined);
+  const [visitTime, setVisitTime] = useState<string>("");
   const submitLock = useRef(false);
+
+  const timeSlots = useMemo(() => {
+    const slots: string[] = [];
+    for (let h = 8; h <= 20; h++) {
+      slots.push(`${String(h).padStart(2, "0")}:00`);
+      if (h < 20) slots.push(`${String(h).padStart(2, "0")}:30`);
+    }
+    return slots;
+  }, []);
 
 
   const access = useQuery({ queryKey: ["access"], queryFn: () => accessFn({}) });
@@ -121,6 +140,8 @@ function PropertiesPage() {
     onSuccess: () => {
       toast.success("تم إرسال طلب الحجز بنجاح");
       setBookingFor(null);
+      setVisitDate(undefined);
+      setVisitTime("");
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
     },
     onError: (e: Error) => toast.error("تعذّر إنشاء الحجز: " + e.message),
@@ -278,8 +299,8 @@ function PropertiesPage() {
                 full_name: String(fd.get("full_name") ?? ""),
                 phone: toLatinDigits(String(fd.get("phone") ?? "")),
                 email: String(fd.get("email") ?? ""),
-                visit_date: String(fd.get("visit_date") ?? ""),
-                visit_time: String(fd.get("visit_time") ?? ""),
+                visit_date: visitDate ? format(visitDate, "yyyy-MM-dd") : "",
+                visit_time: visitTime,
                 notes: String(fd.get("notes") ?? ""),
               });
             }}
@@ -312,14 +333,51 @@ function PropertiesPage() {
                 <Label htmlFor="b-email">البريد الإلكتروني</Label>
                 <Input id="b-email" name="email" type="email" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label htmlFor="b-date">تاريخ الزيارة</Label>
-                  <Input id="b-date" name="visit_date" type="date" />
+                  <Label>تاريخ الزيارة</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !visitDate && "text-muted-foreground",
+                        )}
+                      >
+                        <CalendarIcon className="size-4" />
+                        {visitDate ? format(visitDate, "yyyy-MM-dd") : <span>اختر التاريخ</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={visitDate}
+                        onSelect={setVisitDate}
+                        initialFocus
+                        className="pointer-events-auto"
+                        disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="b-time">توقيت الزيارة</Label>
-                  <Input id="b-time" name="visit_time" type="time" />
+                  <Label>توقيت الزيارة</Label>
+                  <Select value={visitTime} onValueChange={setVisitTime}>
+                    <SelectTrigger className="w-full">
+                      <div className="flex items-center gap-2">
+                        <Clock className="size-4 text-muted-foreground" />
+                        <SelectValue placeholder="اختر التوقيت" />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {timeSlots.map((slot) => (
+                        <SelectItem key={slot} value={slot}>
+                          {slot}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div className="space-y-1.5">
