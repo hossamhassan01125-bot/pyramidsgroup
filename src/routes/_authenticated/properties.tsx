@@ -140,6 +140,8 @@ function PropertiesPage() {
     onSuccess: () => {
       toast.success("تم إرسال طلب الحجز بنجاح");
       setBookingFor(null);
+      setVisitDate(undefined);
+      setVisitTime("");
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
     },
     onError: (e: Error) => toast.error("تعذّر إنشاء الحجز: " + e.message),
