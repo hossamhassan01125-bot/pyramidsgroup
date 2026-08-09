@@ -155,21 +155,26 @@ export const createBooking = createServerFn({ method: "POST" })
     const { notifyBookingEvent, notifyNewBookingWebhook, notifyBookingRecordWebhook } = await import(
       "@/lib/notify.server"
     );
+    const visitWhen = [row.visit_date, row.visit_time?.slice(0, 5)].filter(Boolean).join(" ") || null;
     await notifyBookingRecordWebhook({
       id: row.id,
       full_name: row.full_name,
       phone: row.phone,
       email: row.email,
-      visit_date: row.visit_date,
+      visit_date: visitWhen,
       notes: row.notes,
       property_id: row.property_id,
     });
-    await notifyBookingEvent({ event: "booking_created", booking: row, property: property ?? null });
+    await notifyBookingEvent({
+      event: "booking_created",
+      booking: { ...row, visit_date: visitWhen },
+      property: property ?? null,
+    });
     await notifyNewBookingWebhook({
       booking_id: row.id,
       full_name: row.full_name,
       phone: row.phone,
-      visit_date: row.visit_date,
+      visit_date: visitWhen,
       property_title: property?.title ?? null,
       notes: row.notes,
     });
