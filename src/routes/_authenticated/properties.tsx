@@ -264,31 +264,40 @@ function PropertiesPage() {
               });
             }}
           >
-            <div className="space-y-1.5">
-              <Label htmlFor="b-name">الاسم</Label>
-              <Input id="b-name" name="full_name" required defaultValue={access.data?.profile?.full_name ?? ""} />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="b-phone">الهاتف</Label>
-              <Input id="b-phone" name="phone" required defaultValue={access.data?.profile?.phone ?? ""} />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="b-email">البريد الإلكتروني</Label>
-              <Input id="b-email" name="email" type="email" />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="b-date">تاريخ الزيارة</Label>
-              <Input id="b-date" name="visit_date" type="date" />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="b-notes">ملاحظات</Label>
-              <Textarea id="b-notes" name="notes" maxLength={1000} />
-            </div>
-            <DialogFooter>
-              <Button type="submit" disabled={booking.isPending}>
-                تأكيد الحجز
-              </Button>
-            </DialogFooter>
+            <fieldset disabled={booking.isPending} className="space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="b-name">الاسم</Label>
+                <Input id="b-name" name="full_name" required defaultValue={access.data?.profile?.full_name ?? ""} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="b-phone">الهاتف</Label>
+                <Input id="b-phone" name="phone" required defaultValue={access.data?.profile?.phone ?? ""} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="b-email">البريد الإلكتروني</Label>
+                <Input id="b-email" name="email" type="email" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="b-date">تاريخ الزيارة</Label>
+                <Input id="b-date" name="visit_date" type="date" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="b-notes">ملاحظات</Label>
+                <Textarea id="b-notes" name="notes" maxLength={1000} />
+              </div>
+              <DialogFooter>
+                <Button type="submit" disabled={booking.isPending}>
+                  {booking.isPending ? (
+                    <>
+                      <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent ltr:mr-2 rtl:ml-2" />
+                      جاري الإرسال…
+                    </>
+                  ) : (
+                    "تأكيد الحجز"
+                  )}
+                </Button>
+              </DialogFooter>
+            </fieldset>
           </form>
         </DialogContent>
       </Dialog>
