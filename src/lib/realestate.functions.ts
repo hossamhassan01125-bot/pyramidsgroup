@@ -152,29 +152,12 @@ export const createBooking = createServerFn({ method: "POST" })
       .select("id, reference, title, city, type, price")
       .eq("id", data.property_id)
       .maybeSingle();
-    const { notifyBookingEvent, notifyNewBookingWebhook, notifyBookingRecordWebhook } = await import(
-      "@/lib/notify.server"
-    );
-    const visitWhen = [row.visit_date, row.visit_time?.slice(0, 5)].filter(Boolean).join(" ") || null;
-    await notifyBookingRecordWebhook({
-      id: row.id,
-      full_name: row.full_name,
-      phone: row.phone,
-      email: row.email,
-      visit_date: visitWhen,
-      notes: row.notes,
-      property_id: row.property_id,
-    });
-    await notifyBookingEvent({
-      event: "booking_created",
-      booking: { ...row, visit_date: visitWhen },
-      property: property ?? null,
-    });
-    await notifyNewBookingWebhook({
+    const { sendBookingWebhook, formatVisitWhen } = await import("@/lib/notify.server");
+    await sendBookingWebhook({
       booking_id: row.id,
       full_name: row.full_name,
       phone: row.phone,
-      visit_date: visitWhen,
+      visit_when: formatVisitWhen(row.visit_date, row.visit_time),
       property_title: property?.title ?? null,
       notes: row.notes,
     });
@@ -225,8 +208,15 @@ export const updateBooking = createServerFn({ method: "POST" })
         .select("id, reference, title, city, type, price")
         .eq("id", row.property_id)
         .maybeSingle();
-      const { notifyBookingEvent } = await import("@/lib/notify.server");
-      await notifyBookingEvent({ event: "booking_confirmed", booking: row, property: property ?? null });
+      const { sendBookingWebhook, formatVisitWhen } = await import("@/lib/notify.server");
+      await sendBookingWebhook({
+        booking_id: row.id,
+        full_name: row.full_name,
+        phone: row.phone,
+        visit_when: formatVisitWhen(row.visit_date, row.visit_time),
+        property_title: property?.title ?? null,
+        notes: row.notes,
+      });
     }
 
     return row;
